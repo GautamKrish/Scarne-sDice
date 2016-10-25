@@ -1,11 +1,13 @@
 package com.example.android.dicegame;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -82,14 +84,18 @@ public class MainActivity extends AppCompatActivity {
         TextView text_update = (TextView) findViewById(R.id.label);
         text_update.setText("your score:" + user_overall_score + " computer score:" + computer_overall_score);
         text_update.setTextSize(15);
+        int cw=winner_game();
+        if(cw==1)
+            return;
         computerTurn();
 
     }
 
     public void computerTurn() {
-        Button roll_button = (Button) findViewById(R.id.rb);
-        Button hold_button = (Button) findViewById(R.id.hb);
-        TextView text_update = (TextView) findViewById(R.id.label);
+        Handler timehandler = new Handler();
+        final Button roll_button = (Button) findViewById(R.id.rb);
+        final Button hold_button = (Button) findViewById(R.id.hb);
+        final TextView text_update = (TextView) findViewById(R.id.label);
         roll_button.setEnabled(false);
         hold_button.setEnabled(false);
         while (true) {
@@ -103,26 +109,41 @@ public class MainActivity extends AppCompatActivity {
                 break;
             } else {
                 computer_turn_score = computer_turn_score + dv;
-                if (computer_turn_score >= 20) {
+                if (computer_turn_score >= 15) {
                     computer_overall_score = computer_overall_score + computer_turn_score;
                     computer_turn_score = 0;
                     text_update.setText("your score:" + user_overall_score + " computer score:" + computer_overall_score);
                     text_update.setTextSize(15);
-                    roll_button.setClickable(true);
-                    hold_button.setClickable(true);
-                    break;
+                    roll_button.setEnabled(true);
+                    hold_button.setEnabled(true);
+                    winner_game();
+                    break ;
                 } else {
                     text_update.setText("your score:" + user_overall_score + " computer score:" + computer_overall_score + " computer turn score:" + computer_turn_score);
                     text_update.setTextSize(12);
-                    roll_button.setEnabled(true);
-                    hold_button.setEnabled(true);
-
                 }
-
             }
-
         }
     }
+    public int winner_game()
+    {
+        Button roll_button = (Button) findViewById(R.id.rb);
+        Button hold_button = (Button) findViewById(R.id.hb);
+        if(user_overall_score>=100) {
+            Toast.makeText(this, "Game Over.Winner is the user", Toast.LENGTH_LONG).show();
+            roll_button.setEnabled(false);
+            hold_button.setEnabled(false);
+            return 1;
+        }
+        else if(computer_overall_score>=100) {
+            Toast.makeText(this, "Game over.Winner is the computer", Toast.LENGTH_LONG).show();
+            roll_button.setEnabled(false);
+            hold_button.setEnabled(false);
+        }
+        return 0;
+    }
 }
+
+
 
 
